@@ -171,7 +171,10 @@
                     <td th:text="${g.phone}">0901 234 567</td>
                     <td th:text="${g.address}">Hà Nội</td>
                     <td class="actions">
+                        <a th:href="@{/guests/details/{id}(id=${g.guestId})}" 
+       class="action-link" style="color: #2563eb;">Chi tiết</a>
                         <a th:href="@{/guests/edit/{id}(id=${g.guestId})}" class="action-link edit">Cập nhật</a>
+
                         <a th:href="@{/guests/delete/{id}(id=${g.guestId})}" 
                            class="action-link delete" 
                            onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?')">Xóa</a>

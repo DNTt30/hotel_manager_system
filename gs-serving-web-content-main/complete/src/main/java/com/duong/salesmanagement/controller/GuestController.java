@@ -1,7 +1,9 @@
 package com.duong.salesmanagement.controller;
 
 import com.duong.salesmanagement.model.Guest;
+import com.duong.salesmanagement.model.Reservation;
 import com.duong.salesmanagement.service.GuestService;
+import com.duong.salesmanagement.repository.ReservationRepository; // Đảm bảo có import này
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GuestController {
 
     private final GuestService guestService;
+    private final ReservationRepository reservationRepository; // Khai báo thêm repository
 
-    public GuestController(GuestService guestService) {
+    // Tiêm cả GuestService và ReservationRepository qua Constructor
+    public GuestController(GuestService guestService, ReservationRepository reservationRepository) {
         this.guestService = guestService;
+        this.reservationRepository = reservationRepository;
     }
 
     @GetMapping("/list")
@@ -31,12 +36,23 @@ public class GuestController {
         model.addAttribute("guests", guests);
         model.addAttribute("keyword", keyword);
 
-        // Xử lý AJAX cho tính năng tự động tìm kiếm
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
             return "guest/list :: #guestTable"; 
         }
 
         return "guest/list";
+    }
+
+    // PHƯƠNG THỨC XỬ LÝ LỖI 404 BẠN ĐANG GẶP
+    @GetMapping("/details/{id}")
+    public String showGuestDetails(@PathVariable("id") Long id, Model model) {
+        Guest guest = guestService.getGuestById(id);
+        // Lấy lịch sử từ bảng Reservation dựa trên Guest ID
+        List<Reservation> history = reservationRepository.findByGuestGuestId(id);
+
+        model.addAttribute("guest", guest);
+        model.addAttribute("history", history);
+        return "guest/detail"; // Tên file templates/guest/detail.html
     }
 
     @GetMapping("/add")
@@ -55,12 +71,10 @@ public class GuestController {
         return "redirect:/guests/list";
     }
 
-    // --- BỔ SUNG CÁC MAPPING CÒN THIẾU ---
-    
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
         model.addAttribute("guest", guestService.getGuestById(id));
-        return "guest/add"; // Dùng chung form với trang Add
+        return "guest/add";
     }
 
     @GetMapping("/delete/{id}")

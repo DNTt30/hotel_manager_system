@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Guest Details - Grand Luxe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1e293b; --accent: #b59410; --bg: #f1f5f9; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); padding: 40px; margin: 0; }
+        .container { max-width: 1000px; margin: auto; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--bg); padding-bottom: 15px; margin-bottom: 20px; }
+        h1, h2 { font-family: 'Playfair Display', serif; color: var(--primary); margin: 0; }
+        .points-badge { background: var(--accent); color: white; padding: 8px 18px; border-radius: 25px; font-weight: 600; font-size: 0.9rem; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .info-item label { display: block; color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
+        .info-item span { font-size: 1.1rem; color: var(--primary); font-weight: 500; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; padding: 15px; background: #f8fafc; color: #64748b; font-size: 0.75rem; text-transform: uppercase; border-bottom: 2px solid var(--bg); }
+        td { padding: 15px; border-bottom: 1px solid var(--bg); font-size: 0.9rem; }
+        .status-badge { padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 600; }
+        .btn-back { display: inline-block; margin-top: 20px; text-decoration: none; color: var(--accent); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h1>Guest Profile</h1>
+            <div class="points-badge">
+                <i class="icon">🏆</i> Loyalty Points: <span th:text="${guest.loyaltyPoints}">0</span>
+            </div>
+        </div>
+        <div class="info-grid">
+            <div class="info-item"><label>Họ Tên</label><span th:text="${guest.fullName}">Nguyen Van A</span></div>
+            <div class="info-item"><label>Email</label><span th:text="${guest.email}">vana@gmail.com</span></div>
+            <div class="info-item"><label>Số Điện Thoại</label><span th:text="${guest.phone}">0901234567</span></div>
+            <div class="info-item"><label>Địa Chỉ</label><span th:text="${guest.address}">Hà Nội</span></div>
+            <div class="info-item"><label>Giấy Tờ Định Danh</label><span th:text="${guest.idDocument}">Chưa cập nhật</span></div>
+        </div>
+        <a th:href="@{/guests/list}" class="btn-back">← Quay lại danh sách</a>
+    </div>
+
+    <div class="card">
+        <h2>Stay History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã Đặt Phòng</th>
+                    <th>Ngày Nhận</th>
+                    <th>Ngày Trả</th>
+                    <th>Trạng Thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="res : ${history}">
+                    <td th:text="${'#RES-' + res.reservationId}">#101</td>
+                    <td th:text="${#temporals.format(res.checkInDate, 'dd/MM/yyyy')}">01/01/2026</td>
+                    <td th:text="${#temporals.format(res.checkOutDate, 'dd/MM/yyyy')}">05/01/2026</td>
+                    <td>
+                        <span class="status-badge" 
+                              th:text="${res.status}"
+                              th:style="${res.status == 'Confirmed' ? 'color: #10b981' : 'color: #64748b'}">
+                        </span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(history)}">
+                    <td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">
+                        Khách hàng này chưa có lịch sử lưu trú tại khách sạn.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
