@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Luxe - Reservation Management</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #b59410;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--primary);
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ===== Header ===== */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        /* ===== Toolbar ===== */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-section">
+        <h1>Reservation Management</h1>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <input type="text" placeholder="Search reservations..." />
+            <button>Search</button>
+        </div>
+        <button style="background-color: var(--accent); color: var(--white); padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            Add Reservation
+        </button>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+        <tr style="background-color: var(--bg-light);">
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-light);">Reservation ID</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-light);">Guest Name</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-light);">Room Number</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-light);">Check-in Date</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-light);">Check-out Date</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-light);">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Reservation rows will go here -->
+        </tbody>
+    </table>
+</html>

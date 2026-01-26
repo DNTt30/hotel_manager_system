@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Luxe - Guest Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #b59410;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--primary);
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        /* --- Header --- */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        /* --- Search & Actions --- */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        input[type="text"] {
+            padding: 12px 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            width: 300px;
+            font-family: inherit;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-search { background: var(--primary); color: white; }
+        .btn-add { background: var(--accent); color: white; }
+        .btn-back { background: #cbd5e1; color: var(--primary); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* --- Table Styling --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            text-align: left;
+            background: #f8fafc;
+            color: var(--text-muted);
+            padding: 15px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        td {
+            padding: 18px 15px;
+            border-bottom: 1px solid var(--bg-light);
+            font-size: 0.95rem;
+        }
+
+        tr:hover { background-color: #f1f5f9; }
+
+        .guest-name { font-weight: 700; color: var(--primary); }
+
+        /* --- Action Buttons --- */
+        .actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-link {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .edit { color: var(--accent); }
+        .delete { color: #ef4444; }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-section">
+        <h1>Guest Management</h1>
+        <a href="/index.html" class="btn btn-back">← Back to Dashboard</a>
+    </div>
+
+    <div class="toolbar">
+        <form th:action="@{/guests/list}" method="get" class="search-box">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by name or email...">
+            <button type="submit" class="btn btn-search">Search Guest</button>
+        </form>
+        <a th:href="@{/guests/add}" class="btn btn-add">+ Register New Guest</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email Address</th>
+                <th>Phone Number</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="g : ${guests}">
+                <td th:text="${g.guestId}">#001</td>
+                <td class="guest-name" th:text="${g.fullName}">Nguyen Van A</td>
+                <td th:text="${g.email}">vana@luxury.com</td>
+                <td th:text="${g.phone}">0901 234 567</td>
+                <td class="actions">
+                    <a th:href="@{/guests/edit/{id}(id=${g.guestId})}" class="action-link edit">Update Profile</a>
+                    <a th:href="@{/guests/delete/{id}(id=${g.guestId})}" 
+                       class="action-link delete" 
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?')">Delete</a>
+                </td>
+            </tr>
+            
+            <tr th:if="${#lists.isEmpty(guests)}">
+                <td colspan="5" class="empty-state">
+                    Không tìm thấy dữ liệu khách hàng nào.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
