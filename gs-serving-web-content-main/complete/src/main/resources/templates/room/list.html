@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Room Management</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -28,7 +31,7 @@
             background: var(--white);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
         .header-section {
@@ -67,8 +70,15 @@
             cursor: pointer;
         }
 
-        .btn-add { background: var(--accent); color: white; }
-        .btn-back { background: #cbd5e1; color: var(--primary); }
+        .btn-add {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-back {
+            background: #cbd5e1;
+            color: var(--primary);
+        }
 
         table {
             width: 100%;
@@ -89,9 +99,13 @@
             border-bottom: 1px solid var(--bg-light);
         }
 
-        tr:hover { background: #f1f5f9; }
+        tr:hover {
+            background: #f1f5f9;
+        }
 
-        .room-number { font-weight: 700; }
+        .room-number {
+            font-weight: 700;
+        }
 
         .status {
             padding: 6px 12px;
@@ -101,17 +115,37 @@
             display: inline-block;
         }
 
-        .available { background: #dcfce7; color: #166534; }
-        .occupied { background: #fee2e2; color: #991b1b; }
-        .maintenance { background: #fef3c7; color: #92400e; }
+        .available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .occupied {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .maintenance {
+            background: #fef3c7;
+            color: #92400e;
+        }
 
         .actions {
             display: flex;
             gap: 15px;
         }
 
-        .edit { color: var(--accent); font-weight: 600; text-decoration: none; }
-        .delete { color: #ef4444; font-weight: 600; text-decoration: none; }
+        .edit {
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .delete {
+            color: #ef4444;
+            font-weight: 600;
+            text-decoration: none;
+        }
 
         .empty {
             text-align: center;
@@ -123,82 +157,78 @@
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <div class="header-section">
-        <h1>Room Management</h1>
-        <a href="/index.html" class="btn btn-back">← Back to Dashboard</a>
-    </div>
+        <div class="header-section">
+            <h1>Room Management</h1>
+            <a href="/index.html" class="btn btn-back">← Back to Dashboard</a>
+        </div>
 
-    <div class="toolbar">
-        <input type="text" id="searchInput"
-               th:value="${keyword}"
-               placeholder="Tìm kiếm theo số phòng hoặc loại phòng..."
-               autocomplete="off">
+        <div class="toolbar">
+            <input type="text" id="searchInput" th:value="${keyword}"
+                placeholder="Tìm kiếm theo số phòng hoặc loại phòng..." autocomplete="off">
 
-        <a th:href="@{/rooms/add}" class="btn btn-add">+ Add New Room</a>
-    </div>
+            <a th:href="@{/rooms/add}" class="btn btn-add">+ Add New Room</a>
+        </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Số Phòng</th>
-            <th>Loại Phòng</th>
-            <th>Trạng Thái</th>
-            <th>Thao Tác</th>
-        </tr>
-        </thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Số Phòng</th>
+                    <th>Loại Phòng</th>
+                    <th>Trạng Thái</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
 
-        <!-- 🔥 CHỈ TBODY ĐƯỢC AJAX REPLACE -->
-        <tbody id="roomBody" th:fragment="roomBody">
-        <tr th:each="r : ${rooms}">
-            <td th:text="${r.roomId}">1</td>
-            <td class="room-number" th:text="${r.roomNumber}">101</td>
-            <td th:text="${r.roomType != null ? r.roomType.typeName : 'N/A'}">N/A</td>
+            <!-- 🔥 CHỈ TBODY ĐƯỢC AJAX REPLACE -->
+            <tbody id="roomBody" th:fragment="roomBody">
+                <tr th:each="r : ${rooms}">
+                    <td th:text="${r.roomId}">1</td>
+                    <td class="room-number" th:text="${r.roomNumber}">101</td>
+                    <td th:text="${r.roomType != null ? r.roomType.typeName : 'N/A'}">N/A</td>
 
-            <td>
-                <span class="status"
-                      th:classappend="
+                    <td>
+                        <span class="status" th:classappend="
                         ${r.status == 'AVAILABLE'} ? ' available' :
-                        (${r.status == 'OCCUPIED'} ? ' occupied' : ' maintenance')"
-                      th:text="${r.status}">
-                </span>
-            </td>
+                        (${r.status == 'OCCUPIED'} ? ' occupied' : ' maintenance')" th:text="${r.status}">
+                        </span>
+                    </td>
 
-            <td class="actions">
-                <a th:href="@{/rooms/edit/{id}(id=${r.roomId})}" class="edit">Cập nhật</a>
-                <a th:href="@{/rooms/delete/{id}(id=${r.roomId})}"
-                   class="delete"
-                   onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này?')">
-                    Xóa
-                </a>
-            </td>
-        </tr>
+                    <td class="actions">
+                        <a th:href="@{/rooms/edit/{id}(id=${r.roomId})}" class="edit">Cập nhật</a>
+                        <a th:href="@{/rooms/delete/{id}(id=${r.roomId})}" class="delete"
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này?')">
+                            Xóa
+                        </a>
+                    </td>
+                </tr>
 
-        <tr th:if="${#lists.isEmpty(rooms)}">
-            <td colspan="5" class="empty">Không có dữ liệu phòng nào.</td>
-        </tr>
-        </tbody>
-    </table>
+                <tr th:if="${#lists.isEmpty(rooms)}">
+                    <td colspan="5" class="empty">Không có dữ liệu phòng nào.</td>
+                </tr>
+            </tbody>
+        </table>
 
-</div>
+    </div>
 
-<script>
-    const searchInput = document.getElementById("searchInput");
-    const roomBody = document.getElementById("roomBody");
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const roomBody = document.getElementById("roomBody");
 
-    searchInput.addEventListener("input", function () {
-        const keyword = this.value;
+        searchInput.addEventListener("input", function () {
+            const keyword = this.value;
 
-        fetch(`/rooms/list?keyword=${encodeURIComponent(keyword)}`, {
-            headers: { "X-Requested-With": "XMLHttpRequest" }
-        })
-            .then(res => res.text())
-            .then(html => roomBody.innerHTML = html)
-            .catch(err => console.error(err));
-    });
-</script>
+            fetch(`/rooms/list?keyword=${encodeURIComponent(keyword)}`, {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+                .then(res => res.text())
+                .then(html => roomBody.innerHTML = html)
+                .catch(err => console.error(err));
+        });
+    </script>
 
 </body>
+
 </html>

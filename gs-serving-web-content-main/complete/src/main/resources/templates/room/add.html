@@ -1,59 +1,175 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Grand Luxe - Add New Room</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
     <style>
-        :root { --primary: #1e293b; --accent: #b59410; --bg: #f8fafc; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); padding: 60px; margin: 0; }
-        .form-card { 
-            max-width: 550px; margin: auto; background: white; padding: 45px; 
-            border-radius: 30px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08); 
+        :root {
+            --primary: #1e293b;
+            --accent: #b59410;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
         }
-        h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--primary); margin-bottom: 30px; text-align: center; }
-        .form-group { margin-bottom: 25px; }
-        label { display: block; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: #64748b; margin-bottom: 10px; }
-        input, select { 
-            width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 12px; 
-            font-family: inherit; font-size: 1rem; box-sizing: border-box; transition: 0.3s;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        input:focus { border-color: var(--accent); outline: none; background: #fff; }
-        .btn-save { 
-            background: var(--primary); color: white; padding: 16px; border: none; 
-            border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; 
-            font-size: 1rem; margin-top: 15px; transition: 0.3s;
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
         }
-        .btn-save:hover { background: #334155; transform: translateY(-2px); }
-        .btn-cancel { 
-            display: block; text-align: center; margin-top: 20px; color: #94a3b8; 
-            text-decoration: none; font-size: 0.9rem; font-weight: 600; 
+
+        .form-card {
+            max-width: 500px;
+            width: 100%;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-top: 5px solid var(--accent);
+        }
+
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background: #fff;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(181, 148, 16, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn-save {
+            background-color: var(--accent);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .btn-save:hover {
+            background-color: #a3850d;
+            transform: translateY(-1px);
+        }
+
+        .btn-cancel {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            color: var(--accent);
         }
     </style>
 </head>
+
 <body>
     <div class="form-card">
-        <h2>Thêm Phòng Mới</h2>
-        <form th:action="@{/rooms/save}" th:object="${room}" method="post">
-            
+        <div class="header">
+            <h2>Thêm Phòng Mới</h2>
+            <p class="subtitle">Nhập thông tin chi tiết phòng</p>
+        </div>
+
+        <form th:action="@{/rooms/save}" method="post">
             <div class="form-group">
-                <label>Số phòng (Ví dụ: 101, 302)</label>
-                <input type="text" th:field="*{roomNumber}" placeholder="Nhập số phòng..." required>
+                <label>Số phòng</label>
+                <input type="text" name="roomNumber" placeholder="Ví dụ: 101, 302..." required>
             </div>
 
             <div class="form-group">
                 <label>Loại phòng</label>
-                <select th:field="*{type}"> <option th:each="t : ${roomTypes}" 
-                            th:value="${t.typeId}" 
-                            th:text="${t.typeName}">Standard Single</option>
+                <select name="roomTypeId" required>
+                    <option th:each="rt : ${roomTypes}" th:value="${rt.typeId}" th:text="${rt.typeName}">Standard
+                    </option>
                 </select>
             </div>
 
-            <input type="hidden" th:field="*{status}" value="AVAILABLE">
+            <input type="hidden" name="status" value="AVAILABLE">
 
-            <button type="submit" class="btn-save">Xác nhận thêm phòng</button>
-            <a th:href="@{/rooms/list}" class="btn-cancel">Hủy bỏ và quay lại</a>
+            <div class="btn-group">
+                <button type="submit" class="btn-save">Xác nhận thêm phòng</button>
+                <a th:href="@{/rooms/list}" class="btn-cancel">Hủy bỏ và quay lại</a>
+            </div>
         </form>
     </div>
 </body>
+
 </html>

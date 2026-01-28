@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Luxe - Guest Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #1e293b;
@@ -28,7 +31,7 @@
             background: var(--white);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
         /* --- Header --- */
@@ -81,9 +84,20 @@
             transition: 0.3s;
         }
 
-        .btn-add { background: var(--accent); color: white; }
-        .btn-back { background: #cbd5e1; color: var(--primary); }
-        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-add {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-back {
+            background: #cbd5e1;
+            color: var(--primary);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
 
         /* --- Table Styling --- */
         table {
@@ -109,9 +123,14 @@
             font-size: 0.95rem;
         }
 
-        tr:hover { background-color: #f1f5f9; }
+        tr:hover {
+            background-color: #f1f5f9;
+        }
 
-        .guest-name { font-weight: 700; color: var(--primary); }
+        .guest-name {
+            font-weight: 700;
+            color: var(--primary);
+        }
 
         /* --- Action Buttons --- */
         .actions {
@@ -125,8 +144,13 @@
             font-size: 0.85rem;
         }
 
-        .edit { color: var(--accent); }
-        .delete { color: #ef4444; }
+        .edit {
+            color: var(--accent);
+        }
+
+        .delete {
+            color: #ef4444;
+        }
 
         .empty-state {
             text-align: center;
@@ -135,83 +159,84 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div class="header-section">
-        <h1>Guest Management</h1>
-        <a href="/index.html" class="btn btn-back">← Back to Dashboard</a>
-    </div>
-
-    <div class="toolbar">
-        <div class="search-box">
-            <input type="text" id="searchInput" th:value="${keyword}" 
-                   placeholder="Tìm kiếm theo tên khách hàng..." autocomplete="off">
+    <div class="container">
+        <div class="header-section">
+            <h1>Guest Management</h1>
+            <a href="/index.html" class="btn btn-back">← Back to Dashboard</a>
         </div>
-        <a th:href="@{/guests/add}" class="btn btn-add">+ Register New Guest</a>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" th:value="${keyword}" placeholder="Tìm kiếm theo tên khách hàng..."
+                    autocomplete="off">
+            </div>
+            <a th:href="@{/guests/add}" class="btn btn-add">+ Register New Guest</a>
+        </div>
+
+        <div id="guestTable">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Họ Tên</th>
+                        <th>Email</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Địa Chỉ</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="g : ${guests}">
+                        <td th:text="${g.guestId}">#001</td>
+                        <td class="guest-name" th:text="${g.fullName}">Nguyễn Văn A</td>
+                        <td th:text="${g.email}">vana@luxury.com</td>
+                        <td th:text="${g.phone}">0901 234 567</td>
+                        <td th:text="${g.address}">Hà Nội</td>
+                        <td class="actions">
+                            <a th:href="@{/guests/details/{id}(id=${g.guestId})}" class="action-link"
+                                style="color: #2563eb;">Chi tiết</a>
+                            <a th:href="@{/guests/edit/{id}(id=${g.guestId})}" class="action-link edit">Cập nhật</a>
+
+                            <a th:href="@{/guests/delete/{id}(id=${g.guestId})}" class="action-link delete"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?')">Xóa</a>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(guests)}">
+                        <td colspan="6" class="empty-state">
+                            Không tìm thấy dữ liệu khách hàng nào.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div id="guestTable">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Họ Tên</th>
-                    <th>Email</th>
-                    <th>Số Điện Thoại</th>
-                    <th>Địa Chỉ</th>
-                    <th>Thao Tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="g : ${guests}">
-                    <td th:text="${g.guestId}">#001</td>
-                    <td class="guest-name" th:text="${g.fullName}">Nguyễn Văn A</td>
-                    <td th:text="${g.email}">vana@luxury.com</td>
-                    <td th:text="${g.phone}">0901 234 567</td>
-                    <td th:text="${g.address}">Hà Nội</td>
-                    <td class="actions">
-                        <a th:href="@{/guests/details/{id}(id=${g.guestId})}" 
-       class="action-link" style="color: #2563eb;">Chi tiết</a>
-                        <a th:href="@{/guests/edit/{id}(id=${g.guestId})}" class="action-link edit">Cập nhật</a>
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const guestTable = document.getElementById('guestTable');
 
-                        <a th:href="@{/guests/delete/{id}(id=${g.guestId})}" 
-                           class="action-link delete" 
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?')">Xóa</a>
-                    </td>
-                </tr>
-                
-                <tr th:if="${#lists.isEmpty(guests)}">
-                    <td colspan="6" class="empty-state">
-                        Không tìm thấy dữ liệu khách hàng nào.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+        searchInput.addEventListener('input', function () {
+            const keyword = this.value;
 
-<script>
-    const searchInput = document.getElementById('searchInput');
-    const guestTable = document.getElementById('guestTable');
-
-    searchInput.addEventListener('input', function() {
-        const keyword = this.value;
-
-        // Gửi yêu cầu AJAX đến Server
-        fetch(`/guests/list?keyword=${encodeURIComponent(keyword)}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.text())
-        .then(html => {
-            // Chỉ cập nhật phần fragment bảng mà server trả về
-            guestTable.innerHTML = html;
-        })
-        .catch(error => console.error('Lỗi tìm kiếm:', error));
-    });
-</script>
+            // Gửi yêu cầu AJAX đến Server
+            fetch(`/guests/list?keyword=${encodeURIComponent(keyword)}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    // Chỉ cập nhật phần fragment bảng mà server trả về
+                    guestTable.innerHTML = html;
+                })
+                .catch(error => console.error('Lỗi tìm kiếm:', error));
+        });
+    </script>
 
 </body>
+
 </html>
