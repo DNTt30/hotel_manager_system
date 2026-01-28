@@ -43,11 +43,9 @@
 
             <div class="form-group">
                 <label>Loại phòng</label>
-                <select th:field="*{type}">
-                    <option value="Standard Single">Standard Single</option>
-                    <option value="Deluxe Double">Deluxe Double</option>
-                    <option value="Executive Suite">Executive Suite</option>
-                    <option value="Presidential Suite">Presidential Suite</option>
+                <select th:field="*{type}"> <option th:each="t : ${roomTypes}" 
+                            th:value="${t.typeId}" 
+                            th:text="${t.typeName}">Standard Single</option>
                 </select>
             </div>
 
