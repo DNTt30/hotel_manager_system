@@ -83,20 +83,53 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            text-align: left;
+            vertical-align: middle;
         }
 
         th {
             background: #f8fafc;
             color: var(--text-muted);
-            padding: 15px;
+            padding: 15px 20px;
             text-transform: uppercase;
             font-size: 0.75rem;
             border-bottom: 2px solid var(--bg-light);
         }
 
         td {
-            padding: 18px 15px;
+            padding: 18px 20px;
             border-bottom: 1px solid var(--bg-light);
+        }
+
+        /* Column widths */
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 8%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 18%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 22%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 22%;
+        }
+
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 30%;
         }
 
         tr:hover {

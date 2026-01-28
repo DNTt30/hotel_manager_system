@@ -54,7 +54,30 @@ public class ReservationController {
             @RequestParam(value = "confirmationNumber", required = false) String confirmationNumber,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "numberOfGuests", required = false, defaultValue = "1") int numberOfGuests,
-            @RequestParam(value = "specialRequests", required = false) String specialRequests) {
+            @RequestParam(value = "specialRequests", required = false) String specialRequests,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+
+        // Parse dates first
+        LocalDate checkIn = LocalDate.parse(checkInDate);
+        LocalDate checkOut = LocalDate.parse(checkOutDate);
+
+        // Validation 1: Check-out date phải sau Check-in date
+        if (!checkOut.isAfter(checkIn)) {
+            redirectAttributes.addFlashAttribute("error", "Ngày trả phòng phải sau ngày nhận phòng!");
+            return "redirect:/reservations/add";
+        }
+
+        // Validation 2: Kiểm tra phòng không bị trùng lịch
+        List<Reservation> overlapping = reservationRepository.findOverlappingReservations(roomId, checkIn, checkOut);
+        if (!overlapping.isEmpty()) {
+            Room room = roomRepository.findById(roomId).orElse(null);
+            String roomNumber = room != null ? room.getRoomNumber() : "N/A";
+            redirectAttributes.addFlashAttribute("error",
+                    String.format(
+                            "Phòng %s đã được đặt trong khoảng thời gian này! Vui lòng chọn ngày khác hoặc phòng khác.",
+                            roomNumber));
+            return "redirect:/reservations/add";
+        }
 
         Reservation reservation = new Reservation();
 
@@ -65,9 +88,9 @@ public class ReservationController {
         reservation.setGuest(guest);
         reservation.setRoom(room);
 
-        // Parse và set dates
-        reservation.setCheckInDate(LocalDate.parse(checkInDate));
-        reservation.setCheckOutDate(LocalDate.parse(checkOutDate));
+        // Set dates
+        reservation.setCheckInDate(checkIn);
+        reservation.setCheckOutDate(checkOut);
 
         // Set created date
         reservation.setCreatedDate(LocalDate.now());
@@ -93,8 +116,7 @@ public class ReservationController {
 
         // Calculate total price based on room type and number of nights
         if (room != null && room.getRoomType() != null) {
-            long nights = java.time.temporal.ChronoUnit.DAYS.between(
-                    reservation.getCheckInDate(), reservation.getCheckOutDate());
+            long nights = java.time.temporal.ChronoUnit.DAYS.between(checkIn, checkOut);
             if (nights > 0) {
                 BigDecimal pricePerNight = room.getRoomType().getBasePrice();
                 reservation.setTotalPrice(pricePerNight.multiply(BigDecimal.valueOf(nights)));
@@ -102,6 +124,7 @@ public class ReservationController {
         }
 
         reservationRepository.save(reservation);
+        redirectAttributes.addFlashAttribute("success", "Đặt phòng thành công!");
         return "redirect:/reservations/list";
     }
 
@@ -133,7 +156,32 @@ public class ReservationController {
             @RequestParam(value = "confirmationNumber", required = false) String confirmationNumber,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "numberOfGuests", required = false, defaultValue = "1") int numberOfGuests,
-            @RequestParam(value = "specialRequests", required = false) String specialRequests) {
+            @RequestParam(value = "specialRequests", required = false) String specialRequests,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+
+        // Parse dates first
+        LocalDate checkIn = LocalDate.parse(checkInDate);
+        LocalDate checkOut = LocalDate.parse(checkOutDate);
+
+        // Validation 1: Check-out date phải sau Check-in date
+        if (!checkOut.isAfter(checkIn)) {
+            redirectAttributes.addFlashAttribute("error", "Ngày trả phòng phải sau ngày nhận phòng!");
+            return "redirect:/reservations/edit/" + reservationId;
+        }
+
+        // Validation 2: Kiểm tra phòng không bị trùng lịch (loại trừ reservation đang
+        // cập nhật)
+        List<Reservation> overlapping = reservationRepository.findOverlappingReservationsExcluding(
+                roomId, checkIn, checkOut, reservationId);
+        if (!overlapping.isEmpty()) {
+            Room room = roomRepository.findById(roomId).orElse(null);
+            String roomNumber = room != null ? room.getRoomNumber() : "N/A";
+            redirectAttributes.addFlashAttribute("error",
+                    String.format(
+                            "Phòng %s đã được đặt trong khoảng thời gian này! Vui lòng chọn ngày khác hoặc phòng khác.",
+                            roomNumber));
+            return "redirect:/reservations/edit/" + reservationId;
+        }
 
         Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
         if (reservation != null) {
@@ -142,8 +190,8 @@ public class ReservationController {
 
             reservation.setGuest(guest);
             reservation.setRoom(room);
-            reservation.setCheckInDate(LocalDate.parse(checkInDate));
-            reservation.setCheckOutDate(LocalDate.parse(checkOutDate));
+            reservation.setCheckInDate(checkIn);
+            reservation.setCheckOutDate(checkOut);
             reservation.setConfirmationNumber(confirmationNumber);
             reservation.setStatus(status);
             reservation.setNumberOfGuests(numberOfGuests);
@@ -151,8 +199,7 @@ public class ReservationController {
 
             // Recalculate total price
             if (room != null && room.getRoomType() != null) {
-                long nights = java.time.temporal.ChronoUnit.DAYS.between(
-                        reservation.getCheckInDate(), reservation.getCheckOutDate());
+                long nights = java.time.temporal.ChronoUnit.DAYS.between(checkIn, checkOut);
                 if (nights > 0) {
                     BigDecimal pricePerNight = room.getRoomType().getBasePrice();
                     reservation.setTotalPrice(pricePerNight.multiply(BigDecimal.valueOf(nights)));
@@ -160,6 +207,7 @@ public class ReservationController {
             }
 
             reservationRepository.save(reservation);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật đặt phòng thành công!");
         }
         return "redirect:/reservations/details/" + reservationId;
     }
