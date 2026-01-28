@@ -1,6 +1,63 @@
-/target/
-/.idea/
-/*.iml
-/out/
+# Compiled class files
+*.class
+
+# Log files
+*.log
+hs_err_pid*
+replay_pid*
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# macOS
 .DS_Store
-application.properties.bak
+
+# Windows
+Thumbs.db
+
+# Environment files - IMPORTANT: Protect sensitive data
+application.properties
+application.yml
+application-*.properties
+application-*.yml
+*.env
+.env
+
+# Spring Boot
+spring-shell.log

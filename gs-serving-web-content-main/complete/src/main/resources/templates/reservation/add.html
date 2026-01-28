@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Luxe - New Reservation</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #b59410;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--primary);
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin: 0 0 30px 0;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--primary);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>New Reservation</h1>
+
+        <form th:action="@{/reservations/save}" method="post">
+
+            <div class="form-group">
+                <label>Khách Hàng</label>
+                <select name="guestId" required>
+                    <option value="">-- Chọn khách hàng --</option>
+                    <option th:each="g : ${guests}" th:value="${g.guestId}"
+                        th:text="${g.fullName + ' (' + g.email + ')'}">Guest Name</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Phòng</label>
+                <select name="roomId" required>
+                    <option value="">-- Chọn phòng --</option>
+                    <option th:each="room : ${rooms}" th:value="${room.roomId}"
+                        th:text="${room.roomNumber + ' - ' + room.roomType}">Room 101</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ngày Nhận Phòng</label>
+                    <input type="date" name="check_in_date" required>
+                </div>
+                <div class="form-group">
+                    <label>Ngày Trả Phòng</label>
+                    <input type="date" name="check_out_date" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Mã Xác Nhận (Tùy chọn)</label>
+                <input type="text" name="confirmation_number" placeholder="Để trống sẽ tự động tạo">
+            </div>
+
+            <div class="form-group">
+                <label>Trạng Thái</label>
+                <select name="status">
+                    <option value="PENDING">Chờ xác nhận (Pending)</option>
+                    <option value="CONFIRMED">Đã xác nhận (Confirmed)</option>
+                    <option value="CHECKED_IN">Đã nhận phòng (Checked In)</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Tạo Đặt Phòng</button>
+                <a th:href="@{/reservations/list}" class="btn btn-secondary">Hủy</a>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+
+</html>

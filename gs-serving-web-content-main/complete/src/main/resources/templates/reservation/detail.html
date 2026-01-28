@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Details - Grand Luxe</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #b59410;
+            --bg: #f1f5f9;
+            --white: #ffffff;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .reservation-id {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-confirmed {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-checked-in {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-checked-out {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .info-item label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .info-item span {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 30px 0 20px 0;
+            padding-top: 20px;
+            border-top: 1px solid var(--bg);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid var(--bg);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-back {
+            background: #e2e8f0;
+            color: var(--primary);
+        }
+
+        .btn-edit {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-checkin {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-checkout {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div>
+                    <span class="reservation-id" th:text="${'#RES-' + reservation.reservation_id}">#RES-001</span>
+                    <h1>Reservation Details</h1>
+                </div>
+                <span class="status-badge"
+                    th:classappend="${reservation.status == 'PENDING' ? 'status-pending' : 
+                                   (reservation.status == 'CONFIRMED' ? 'status-confirmed' : 
+                                   (reservation.status == 'CHECKED_IN' ? 'status-checked-in' : 
+                                   (reservation.status == 'CHECKED_OUT' ? 'status-checked-out' : 'status-cancelled')))}"
+                    th:text="${reservation.status}">PENDING</span>
+            </div>
+
+            <!-- Guest Information -->
+            <h3 class="section-title">Thông Tin Khách Hàng</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Họ Tên</label>
+                    <span th:text="${reservation.guest != null ? reservation.guest.fullName : 'N/A'}">Nguyen Van
+                        A</span>
+                </div>
+                <div class="info-item">
+                    <label>Email</label>
+                    <span
+                        th:text="${reservation.guest != null ? reservation.guest.email : 'N/A'}">email@example.com</span>
+                </div>
+                <div class="info-item">
+                    <label>Số Điện Thoại</label>
+                    <span th:text="${reservation.guest != null ? reservation.guest.phone : 'N/A'}">0901234567</span>
+                </div>
+                <div class="info-item">
+                    <label>Giấy Tờ</label>
+                    <span th:text="${reservation.guest != null ? reservation.guest.idDocument : 'N/A'}">CCCD</span>
+                </div>
+            </div>
+
+            <!-- Room Information -->
+            <h3 class="section-title">Thông Tin Phòng</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Số Phòng</label>
+                    <span th:text="${reservation.room != null ? reservation.room.roomNumber : 'N/A'}">101</span>
+                </div>
+                <div class="info-item">
+                    <label>Loại Phòng</label>
+                    <span th:text="${reservation.room != null ? reservation.room.roomType : 'N/A'}">Standard
+                        Single</span>
+                </div>
+            </div>
+
+            <!-- Reservation Dates -->
+            <h3 class="section-title">Thời Gian Lưu Trú</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Ngày Nhận Phòng</label>
+                    <span
+                        th:text="${reservation.check_in_date != null ? #temporals.format(reservation.check_in_date, 'dd/MM/yyyy') : 'N/A'}">01/01/2026</span>
+                </div>
+                <div class="info-item">
+                    <label>Ngày Trả Phòng</label>
+                    <span
+                        th:text="${reservation.check_out_date != null ? #temporals.format(reservation.check_out_date, 'dd/MM/yyyy') : 'N/A'}">05/01/2026</span>
+                </div>
+                <div class="info-item">
+                    <label>Ngày Tạo Đơn</label>
+                    <span
+                        th:text="${reservation.created_date != null ? #temporals.format(reservation.created_date, 'dd/MM/yyyy') : 'N/A'}">28/01/2026</span>
+                </div>
+                <div class="info-item">
+                    <label>Mã Xác Nhận</label>
+                    <span
+                        th:text="${reservation.confirmation_number != null ? reservation.confirmation_number : 'Chưa có'}">ABC123</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a th:href="@{/reservations/list}" class="btn btn-back">← Quay lại</a>
+                <a th:href="@{/reservations/edit/{id}(id=${reservation.reservation_id})}" class="btn btn-edit">Chỉnh
+                    sửa</a>
+                <a th:if="${reservation.status == 'CONFIRMED'}"
+                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservation_id}, status='CHECKED_IN')}"
+                    class="btn btn-checkin">Check In</a>
+                <a th:if="${reservation.status == 'CHECKED_IN'}"
+                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservation_id}, status='CHECKED_OUT')}"
+                    class="btn btn-checkout">Check Out</a>
+                <a th:if="${reservation.status != 'CANCELLED' and reservation.status != 'CHECKED_OUT'}"
+                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservation_id}, status='CANCELLED')}"
+                    class="btn btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy đặt phòng này?')">Hủy Đặt
+                    Phòng</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
