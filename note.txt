@@ -1,0 +1,5 @@
+com.duong.salesmanagement/
+├── controller/    ← Xử lý request HTTP
+├── model/         ← Định nghĩa cấu trúc dữ liệu (Entity)
+├── repository/    ← Truy vấn database
+└── service/       ← Logic nghiệp vụ

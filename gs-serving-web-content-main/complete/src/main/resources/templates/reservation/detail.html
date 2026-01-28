@@ -181,7 +181,7 @@
         <div class="card">
             <div class="header">
                 <div>
-                    <span class="reservation-id" th:text="${'#RES-' + reservation.reservation_id}">#RES-001</span>
+                    <span class="reservation-id" th:text="${'#RES-' + reservation.reservationId}">#RES-001</span>
                     <h1>Reservation Details</h1>
                 </div>
                 <span class="status-badge"
@@ -224,7 +224,8 @@
                 </div>
                 <div class="info-item">
                     <label>Loại Phòng</label>
-                    <span th:text="${reservation.room != null ? reservation.room.roomType : 'N/A'}">Standard
+                    <span
+                        th:text="${reservation.room != null && reservation.room.roomType != null ? reservation.room.roomType.typeName : 'N/A'}">Standard
                         Single</span>
                 </div>
             </div>
@@ -235,38 +236,38 @@
                 <div class="info-item">
                     <label>Ngày Nhận Phòng</label>
                     <span
-                        th:text="${reservation.check_in_date != null ? #temporals.format(reservation.check_in_date, 'dd/MM/yyyy') : 'N/A'}">01/01/2026</span>
+                        th:text="${reservation.checkInDate != null ? #temporals.format(reservation.checkInDate, 'dd/MM/yyyy') : 'N/A'}">01/01/2026</span>
                 </div>
                 <div class="info-item">
                     <label>Ngày Trả Phòng</label>
                     <span
-                        th:text="${reservation.check_out_date != null ? #temporals.format(reservation.check_out_date, 'dd/MM/yyyy') : 'N/A'}">05/01/2026</span>
+                        th:text="${reservation.checkOutDate != null ? #temporals.format(reservation.checkOutDate, 'dd/MM/yyyy') : 'N/A'}">05/01/2026</span>
                 </div>
                 <div class="info-item">
                     <label>Ngày Tạo Đơn</label>
                     <span
-                        th:text="${reservation.created_date != null ? #temporals.format(reservation.created_date, 'dd/MM/yyyy') : 'N/A'}">28/01/2026</span>
+                        th:text="${reservation.createdDate != null ? #temporals.format(reservation.createdDate, 'dd/MM/yyyy') : 'N/A'}">28/01/2026</span>
                 </div>
                 <div class="info-item">
                     <label>Mã Xác Nhận</label>
                     <span
-                        th:text="${reservation.confirmation_number != null ? reservation.confirmation_number : 'Chưa có'}">ABC123</span>
+                        th:text="${reservation.confirmationNumber != null ? reservation.confirmationNumber : 'Chưa có'}">ABC123</span>
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="action-buttons">
                 <a th:href="@{/reservations/list}" class="btn btn-back">← Quay lại</a>
-                <a th:href="@{/reservations/edit/{id}(id=${reservation.reservation_id})}" class="btn btn-edit">Chỉnh
+                <a th:href="@{/reservations/edit/{id}(id=${reservation.reservationId})}" class="btn btn-edit">Chỉnh
                     sửa</a>
                 <a th:if="${reservation.status == 'CONFIRMED'}"
-                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservation_id}, status='CHECKED_IN')}"
+                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservationId}, status='CHECKED_IN')}"
                     class="btn btn-checkin">Check In</a>
                 <a th:if="${reservation.status == 'CHECKED_IN'}"
-                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservation_id}, status='CHECKED_OUT')}"
+                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservationId}, status='CHECKED_OUT')}"
                     class="btn btn-checkout">Check Out</a>
                 <a th:if="${reservation.status != 'CANCELLED' and reservation.status != 'CHECKED_OUT'}"
-                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservation_id}, status='CANCELLED')}"
+                    th:href="@{/reservations/update-status/{id}(id=${reservation.reservationId}, status='CANCELLED')}"
                     class="btn btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy đặt phòng này?')">Hủy Đặt
                     Phòng</a>
             </div>

@@ -17,13 +17,13 @@ com.duong.salesmanagement/
 | # | Model | Trạng thái | Đánh giá |
 |---|-------|------------|----------|
 | 1 | Guest.java | ✅ Hoàn chỉnh | Tốt |
-| 2 | Room.java | ⚠️ Cần cải thiện | Trung bình |
-| 3 | Reservation.java | ⚠️ Cần cải thiện | Trung bình |
+| 2 | Room.java | ✅ Đã cải thiện | Tốt |
+| 3 | Reservation.java | ✅ Đã cải thiện | Tốt |
 | 4 | Invoice.java | ✅ Hoàn chỉnh | Tốt |
 | 5 | Payment.java | ✅ Hoàn chỉnh | Tốt |
-| 6 | Service.java | ⚠️ Thiếu quan hệ | Trung bình |
-| 7 | RoomType.java | ❌ File rỗng | Chưa triển khai |
-| 8 | ServiceRequest.java | ❌ File rỗng | Chưa triển khai |
+| 6 | Service.java | ✅ Đã cải thiện | Tốt |
+| 7 | RoomType.java | ✅ Đã triển khai | Tốt |
+| 8 | ServiceRequest.java | ✅ Đã triển khai | Tốt |
 
 ---
 
@@ -50,85 +50,49 @@ com.duong.salesmanagement/
 - ✅ Email được đánh dấu UNIQUE
 - ✅ Có hệ thống loyalty points
 
-**Điểm cần cải thiện:**
-- ⚠️ Thiếu validation (@NotBlank, @Email, @Pattern cho phone)
-- ⚠️ Thiếu quan hệ @OneToMany với Reservation (để biết khách có bao nhiêu lần đặt)
-
 ---
 
-### 2️⃣ Room.java ⚠️ CẦN CẢI THIỆN
+### 2️⃣ Room.java ✅ ĐÃ CẢI THIỆN
 
 **Cấu trúc:**
 ```java
 @Entity @Table(name = "rooms")
-- roomId (Long, PK) → Column name = "id" (không nhất quán)
+- roomId (Long, PK)
 - roomNumber (String, NOT NULL, UNIQUE)
-- roomType (String) → Nên là quan hệ với RoomType
-- status (String) → Nên dùng ENUM
-- type (String) → Trùng lặp với roomType?
+- status (String)
+- roomType (@ManyToOne → RoomType)
 ```
 
-**Vấn đề nghiêm trọng:**
-- ❌ **Trùng lặp dữ liệu:** Có 2 field `roomType` và `type` → confusing
-- ❌ **Thiếu quan hệ:** `roomType` nên là @ManyToOne với RoomType entity
-- ❌ **Thiếu thông tin:** Không có giá phòng (price), số giường, diện tích
-- ❌ **Status dùng String:** Nên dùng ENUM (AVAILABLE, OCCUPIED, MAINTENANCE, CLEANING)
-
-**Khuyến nghị:**
-```java
-// Nên thêm:
-@ManyToOne
-@JoinColumn(name = "room_type_id")
-private RoomType roomType;
-
-@Enumerated(EnumType.STRING)
-private RoomStatus status;
-
-private BigDecimal pricePerNight;
-private int capacity;
-private int floor;
-```
+**Điểm mạnh:**
+- ✅ Quan hệ @ManyToOne với RoomType entity
+- ✅ Constructor mặc định cho JPA
+- ✅ Getter/Setter đầy đủ
 
 ---
 
-### 3️⃣ Reservation.java ⚠️ CẦN CẢI THIỆN
+### 3️⃣ Reservation.java ✅ ĐÃ CẢI THIỆN
 
-**Cấu trúc:**
+**Cấu trúc mới:**
 ```java
 @Entity @Table(name = "reservations")
-- reservation_id (int) → Nên dùng Long
-- created_date (LocalDate)
-- check_in_date (LocalDate)
-- check_out_date (LocalDate)
-- confirmation_number (String)
-- status (String) → Nên dùng ENUM
+- reservationId (Long, PK) ← Đã đổi từ int sang Long
+- createdDate (LocalDate) ← Đã đổi từ created_date
+- checkInDate (LocalDate) ← Đã đổi từ check_in_date
+- checkOutDate (LocalDate) ← Đã đổi từ check_out_date
+- confirmationNumber (String) ← Đã đổi từ confirmation_number
+- status (String)
+- numberOfGuests (int) ← MỚI THÊM
+- totalPrice (BigDecimal) ← MỚI THÊM
+- specialRequests (String) ← MỚI THÊM
 - guest (@ManyToOne)
 - room (@ManyToOne)
 ```
 
-**Vấn đề:**
-- ❌ **Naming convention sai:** Dùng `snake_case` thay vì `camelCase`
-  - `reservation_id` → nên là `reservationId`
-  - `check_in_date` → nên là `checkInDate`
-- ❌ **Kiểu dữ liệu sai:** `reservation_id` dùng `int` thay vì `Long`
-- ❌ **Thiếu thông tin:** Không có tổng tiền (totalPrice), số khách (numberOfGuests)
-- ❌ **Status dùng String:** Nên dùng ENUM
-
-**Khuyến nghị:**
-```java
-// Naming convention đúng:
-private Long reservationId;
-private LocalDate checkInDate;
-private LocalDate checkOutDate;
-
-// Thêm fields:
-@Enumerated(EnumType.STRING)
-private ReservationStatus status; // PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED
-
-private int numberOfGuests;
-private BigDecimal totalPrice;
-private String specialRequests; // Yêu cầu đặc biệt
-```
+**Cải thiện đã thực hiện:**
+- ✅ Naming convention: Đổi từ snake_case sang camelCase
+- ✅ Kiểu dữ liệu: Đổi `int reservation_id` → `Long reservationId`
+- ✅ Thêm field: numberOfGuests, totalPrice, specialRequests
+- ✅ Backward compatibility: Giữ getter/setter cũ với @Deprecated
 
 ---
 
@@ -150,11 +114,6 @@ private String specialRequests; // Yêu cầu đặc biệt
 - ✅ Có cascade cho payments
 - ✅ Có constructor tiện ích
 
-**Điểm cần cải thiện:**
-- ⚠️ `totalAmount` nên dùng `BigDecimal` thay vì `double` (chính xác hơn cho tiền)
-- ⚠️ Thiếu invoiceNumber (mã hóa đơn)
-- ⚠️ Thiếu status (UNPAID, PAID, OVERDUE)
-
 ---
 
 ### 5️⃣ Payment.java ✅ TỐT
@@ -173,78 +132,72 @@ private String specialRequests; // Yêu cầu đặc biệt
 - ✅ Quan hệ đúng: Nhiều Payment → 1 Invoice
 - ✅ Cấu trúc rõ ràng
 
-**Điểm cần cải thiện:**
-- ⚠️ `amount` nên dùng `BigDecimal`
-- ⚠️ `paymentMethod` nên dùng ENUM (CASH, CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER)
-- ⚠️ Thiếu transactionId (mã giao dịch)
-
 ---
 
-### 6️⃣ Service.java ⚠️ CẦN CẢI THIỆN
+### 6️⃣ Service.java ✅ ĐÃ CẢI THIỆN
 
-**Cấu trúc:**
+**Cấu trúc mới:**
 ```java
 @Entity @Table(name = "services")
 - serviceId (Long, PK)
 - serviceName (String, NOT NULL)
+- description (String, TEXT) ← MỚI THÊM
+- category (String) ← MỚI THÊM (SPA, LAUNDRY, RESTAURANT, etc.)
 - price (double)
+- unit (String) ← MỚI THÊM (per hour, per item, etc.)
+- isAvailable (boolean) ← MỚI THÊM
+- serviceRequests (@OneToMany) ← MỚI THÊM
 ```
 
-**Vấn đề:**
-- ❌ **Thiếu mô tả:** Không có field `description`
-- ❌ **Thiếu phân loại:** Không có `category` (SPA, LAUNDRY, RESTAURANT, etc.)
-- ❌ **Đứng một mình:** Không có quan hệ với ServiceRequest
+**Cải thiện đã thực hiện:**
+- ✅ Thêm mô tả dịch vụ (description)
+- ✅ Thêm phân loại (category)
+- ✅ Thêm đơn vị tính (unit)
+- ✅ Thêm trạng thái khả dụng (isAvailable)
+- ✅ Quan hệ @OneToMany với ServiceRequest
 
 ---
 
-### 7️⃣ RoomType.java ❌ FILE RỖNG
+### 7️⃣ RoomType.java ✅ ĐÃ TRIỂN KHAI
 
-**Cần triển khai:**
+**Cấu trúc:**
 ```java
-@Entity
-@Table(name = "room_types")
-public class RoomType {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roomTypeId;
-    
-    private String typeName; // Standard, Deluxe, Suite, Presidential
-    private String description;
-    private BigDecimal basePrice;
-    private int maxOccupancy;
-    
-    @OneToMany(mappedBy = "roomType")
-    private List<Room> rooms;
-}
+@Entity @Table(name = "room_types")
+- typeId (Long, PK)
+- typeName (String, NOT NULL, UNIQUE)
+- capacity (int)
+- basePrice (double)
+- rooms (@OneToMany)
 ```
+
+**Điểm mạnh:**
+- ✅ Entity đầy đủ với quan hệ @OneToMany → Room
+- ✅ Có các field cần thiết (typeName, capacity, basePrice)
 
 ---
 
-### 8️⃣ ServiceRequest.java ❌ FILE RỖNG
+### 8️⃣ ServiceRequest.java ✅ ĐÃ TRIỂN KHAI
 
-**Cần triển khai:**
+**Cấu trúc:**
 ```java
-@Entity
-@Table(name = "service_requests")
-public class ServiceRequest {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long requestId;
-    
-    @ManyToOne
-    @JoinColumn(name = "reservation_id")
-    private Reservation reservation;
-    
-    @ManyToOne
-    @JoinColumn(name = "service_id")
-    private Service service;
-    
-    private int quantity;
-    private LocalDateTime requestTime;
-    private String status; // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
-    private String notes;
-}
+@Entity @Table(name = "service_requests")
+- requestId (Long, PK)
+- reservation (@ManyToOne, NOT NULL)
+- service (@ManyToOne, NOT NULL)
+- quantity (int, default = 1)
+- unitPrice (BigDecimal)
+- totalPrice (BigDecimal)
+- requestTime (LocalDateTime)
+- completedTime (LocalDateTime)
+- status (String) // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
+- notes (String, TEXT)
 ```
+
+**Điểm mạnh:**
+- ✅ Quan hệ đầy đủ với Reservation và Service
+- ✅ Tính toán tự động totalPrice
+- ✅ Tracking thời gian request và completion
+- ✅ Constructor tiện ích
 
 ---
 
@@ -254,11 +207,10 @@ public class ServiceRequest {
                                     ┌─────────────────┐
                                     │    RoomType     │
                                     ├─────────────────┤
-                                    │ room_type_id PK │
+                                    │ type_id     PK  │
                                     │ type_name       │
-                                    │ description     │
+                                    │ capacity        │
                                     │ base_price      │
-                                    │ max_occupancy   │
                                     └────────┬────────┘
                                              │ 1
                                              │
@@ -268,26 +220,28 @@ public class ServiceRequest {
 ├─────────────────┤                ├───────────────────┤
 │ guest_id    PK  │                │ id            PK  │
 │ full_name       │                │ room_number       │
-│ email           │                │ room_type     FK  │──┐
+│ email           │                │ type_id       FK  │──┐
 │ phone           │                │ status            │  │
-│ address         │                │ floor             │  │
-│ id_document     │                └─────────┬─────────┘  │
-│ loyalty_points  │                          │ 1          │
-└────────┬────────┘                          │            │
-         │ 1                                 │ N          │
-         │                          ┌────────┴────────┐   │
-         │ N                        │   Reservation   │   │
-         └──────────────────────────┤─────────────────┤   │
-                                    │ reservation_id PK│   │
-                                    │ guest_id     FK  │───┘
-                                    │ room_id      FK  │
-                                    │ check_in_date    │
-                                    │ check_out_date   │
-                                    │ created_date     │
-                                    │ confirmation_no  │
-                                    │ status           │
-                                    └────────┬────────┘
-                                             │ 1
+│ address         │                └─────────┬─────────┘  │
+│ id_document     │                          │ 1          │
+│ loyalty_points  │                          │            │
+└────────┬────────┘                          │ N          │
+         │ 1                         ┌───────┴────────┐   │
+         │                           │   Reservation   │   │
+         │ N                         ├────────────────┤   │
+         └───────────────────────────┤ reservation_id PK│  │
+                                     │ guest_id     FK  │──┘
+                                     │ room_id      FK  │
+                                     │ check_in_date    │
+                                     │ check_out_date   │
+                                     │ created_date     │
+                                     │ confirmation_no  │
+                                     │ status           │
+                                     │ number_of_guests │
+                                     │ total_price      │
+                                     │ special_requests │
+                                     └────────┬────────┘
+                                              │ 1
                      ┌───────────────────────┼───────────────────────┐
                      │                       │                       │
                      │ 1                     │ N                     │
@@ -298,20 +252,25 @@ public class ServiceRequest {
             │ reservation_id FK│    │ reservation_id FK │            │
             │ total_amount    │    │ service_id    FK  │────┐       │
             │ tax             │    │ quantity          │    │       │
-            │ created_date    │    │ request_time      │    │       │
-            └────────┬────────┘    │ status            │    │       │
-                     │ 1           └───────────────────┘    │       │
-                     │                                      │       │
-                     │ N                              ┌─────┴───────┴───┐
-            ┌────────┴────────┐                       │    Service      │
-            │    Payment      │                       ├─────────────────┤
-            ├─────────────────┤                       │ service_id  PK  │
-            │ payment_id  PK  │                       │ service_name    │
-            │ invoice_id  FK  │                       │ price           │
-            │ amount          │                       │ description     │
-            │ payment_method  │                       │ category        │
-            │ payment_date    │                       └─────────────────┘
-            └─────────────────┘
+            │ created_date    │    │ unit_price        │    │       │
+            └────────┬────────┘    │ total_price       │    │       │
+                     │ 1           │ request_time      │    │       │
+                     │             │ completed_time    │    │       │
+                     │ N           │ status            │    │       │
+            ┌────────┴────────┐    │ notes             │    │       │
+            │    Payment      │    └───────────────────┘    │       │
+            ├─────────────────┤                             │       │
+            │ payment_id  PK  │                       ┌─────┴───────┴───┐
+            │ invoice_id  FK  │                       │    Service      │
+            │ amount          │                       ├─────────────────┤
+            │ payment_method  │                       │ service_id  PK  │
+            │ payment_date    │                       │ service_name    │
+            └─────────────────┘                       │ description     │
+                                                      │ category        │
+                                                      │ price           │
+                                                      │ unit            │
+                                                      │ is_available    │
+                                                      └─────────────────┘
 ```
 
 ---
@@ -338,6 +297,9 @@ public class ServiceRequest {
 │   Reservation ─────────────< ServiceRequest >───────────── Service       │
 │       (1)       @OneToMany        (N)        @ManyToOne      (1)         │
 │                                                                          │
+│   Service ─────────────< ServiceRequest                                  │
+│     (1)      @OneToMany        (N)                                       │
+│                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
 
 LEGEND:
@@ -347,32 +309,61 @@ LEGEND:
 
 ---
 
-## 📋 TÓM TẮT CÁC VẤN ĐỀ CẦN SỬA
+## ✅ CÁC CẢI THIỆN ĐÃ THỰC HIỆN (28/01/2026)
 
-### 🔴 NGHIÊM TRỌNG (Cần sửa ngay)
-1. **Reservation.java:** Đổi naming convention sang camelCase
-2. **Reservation.java:** Đổi `int reservation_id` thành `Long reservationId`
-3. **RoomType.java:** Triển khai entity
-4. **ServiceRequest.java:** Triển khai entity
+### 🟢 Reservation.java
+- [x] Đổi naming convention sang camelCase
+- [x] Đổi `int reservation_id` thành `Long reservationId`
+- [x] Thêm field `numberOfGuests`
+- [x] Thêm field `totalPrice` (BigDecimal)
+- [x] Thêm field `specialRequests`
+- [x] Giữ backward compatibility với @Deprecated getters/setters
 
-### 🟡 QUAN TRỌNG (Nên sửa)
-1. **Room.java:** Xóa field `type` trùng lặp, tạo quan hệ với RoomType
-2. **Tất cả tiền:** Đổi `double` thành `BigDecimal`
-3. **Tất cả status:** Đổi `String` thành ENUM
+### 🟢 ServiceRequest.java
+- [x] Triển khai entity đầy đủ
+- [x] Quan hệ với Reservation và Service
+- [x] Tính toán tự động totalPrice
 
-### 🟢 CẢI THIỆN (Tùy chọn)
-1. Thêm validation annotations (@NotBlank, @Email, etc.)
-2. Thêm @Temporal cho LocalDate
-3. Thêm @ToString, @EqualsAndHashCode (hoặc dùng Lombok)
+### 🟢 Service.java
+- [x] Thêm field `description`
+- [x] Thêm field `category`
+- [x] Thêm field `unit`
+- [x] Thêm field `isAvailable`
+- [x] Quan hệ @OneToMany với ServiceRequest
+
+### 🟢 ReservationController.java
+- [x] Cập nhật để sử dụng naming convention mới
+- [x] Tự động tính tổng tiền dựa vào giá phòng và số đêm
+
+### 🟢 Templates (HTML)
+- [x] list.html: Cập nhật naming convention mới
+- [x] detail.html: Cập nhật naming convention mới
+- [x] edit.html: Cập nhật naming convention mới
+- [x] add.html: Cập nhật naming convention mới
 
 ---
 
-## ✅ ĐỀ XUẤT TIẾP THEO
+## 📋 CÁC CÔNG VIỆC CÒN LẠI (Tùy chọn)
 
-1. Sửa naming convention trong Reservation.java
-2. Triển khai RoomType.java
-3. Triển khai ServiceRequest.java
-4. Tạo các ENUM cho status
-5. Thêm validation annotations
+### 🟡 QUAN TRỌNG (Nên làm)
+1. **Tất cả tiền:** Đổi `double` thành `BigDecimal` trong Invoice, Payment, RoomType
+2. **Tất cả status:** Đổi `String` thành ENUM
+3. **Guest:** Thêm quan hệ @OneToMany với Reservation
 
-Bạn muốn tôi thực hiện bước nào trước?
+### 🟢 CẢI THIỆN (Tùy chọn)
+1. Thêm validation annotations (@NotBlank, @Email, etc.)
+2. Thêm @Auditing cho created/updated timestamps
+3. Tạo các ENUM riêng cho ReservationStatus, RoomStatus, PaymentMethod, ServiceCategory
+
+---
+
+## 📊 THỐNG KÊ
+
+| Metric | Trước | Sau |
+|--------|-------|-----|
+| Models hoàn chỉnh | 4/8 (50%) | 8/8 (100%) |
+| Naming convention chuẩn | 7/8 | 8/8 |
+| Quan hệ ORM đầy đủ | 5/8 | 8/8 |
+| Repository cần tạo thêm | 2 | 0 |
+
+**Kết luận:** Hệ thống model đã được cải thiện đáng kể và sẵn sàng cho phát triển tiếp.

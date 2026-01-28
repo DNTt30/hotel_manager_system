@@ -135,24 +135,25 @@
                 <select name="roomId" required>
                     <option value="">-- Chọn phòng --</option>
                     <option th:each="room : ${rooms}" th:value="${room.roomId}"
-                        th:text="${room.roomNumber + ' - ' + room.roomType}">Room 101</option>
+                        th:text="${room.roomNumber + ' - ' + (room.roomType != null ? room.roomType.typeName : 'N/A')}">
+                        Room 101</option>
                 </select>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Ngày Nhận Phòng</label>
-                    <input type="date" name="check_in_date" required>
+                    <input type="date" name="checkInDate" required>
                 </div>
                 <div class="form-group">
                     <label>Ngày Trả Phòng</label>
-                    <input type="date" name="check_out_date" required>
+                    <input type="date" name="checkOutDate" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Mã Xác Nhận (Tùy chọn)</label>
-                <input type="text" name="confirmation_number" placeholder="Để trống sẽ tự động tạo">
+                <input type="text" name="confirmationNumber" placeholder="Để trống sẽ tự động tạo">
             </div>
 
             <div class="form-group">

@@ -125,11 +125,11 @@
 <body>
 
     <div class="container">
-        <span class="reservation-id" th:text="${'#RES-' + reservation.reservation_id}">#RES-001</span>
+        <span class="reservation-id" th:text="${'#RES-' + reservation.reservationId}">#RES-001</span>
         <h1>Edit Reservation</h1>
 
         <form th:action="@{/reservations/update}" method="post">
-            <input type="hidden" name="reservationId" th:value="${reservation.reservation_id}">
+            <input type="hidden" name="reservationId" th:value="${reservation.reservationId}">
 
             <div class="form-group">
                 <label>Khách Hàng</label>
@@ -145,24 +145,25 @@
                 <select name="roomId" required>
                     <option th:each="room : ${rooms}" th:value="${room.roomId}"
                         th:selected="${reservation.room != null and reservation.room.roomId == room.roomId}"
-                        th:text="${room.roomNumber + ' - ' + room.roomType}">Room 101</option>
+                        th:text="${room.roomNumber + ' - ' + (room.roomType != null ? room.roomType.typeName : 'N/A')}">
+                        Room 101</option>
                 </select>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Ngày Nhận Phòng</label>
-                    <input type="date" name="check_in_date" th:value="${reservation.check_in_date}" required>
+                    <input type="date" name="checkInDate" th:value="${reservation.checkInDate}" required>
                 </div>
                 <div class="form-group">
                     <label>Ngày Trả Phòng</label>
-                    <input type="date" name="check_out_date" th:value="${reservation.check_out_date}" required>
+                    <input type="date" name="checkOutDate" th:value="${reservation.checkOutDate}" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Mã Xác Nhận</label>
-                <input type="text" name="confirmation_number" th:value="${reservation.confirmation_number}">
+                <input type="text" name="confirmationNumber" th:value="${reservation.confirmationNumber}">
             </div>
 
             <div class="form-group">
@@ -183,7 +184,7 @@
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
-                <a th:href="@{/reservations/details/{id}(id=${reservation.reservation_id})}"
+                <a th:href="@{/reservations/details/{id}(id=${reservation.reservationId})}"
                     class="btn btn-secondary">Hủy</a>
             </div>
 

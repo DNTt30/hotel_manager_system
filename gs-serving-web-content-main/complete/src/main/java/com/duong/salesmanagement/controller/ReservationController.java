@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -48,10 +49,12 @@ public class ReservationController {
     @PostMapping("/save")
     public String saveReservation(@RequestParam("guestId") Long guestId,
             @RequestParam("roomId") Long roomId,
-            @RequestParam("check_in_date") String checkInDate,
-            @RequestParam("check_out_date") String checkOutDate,
-            @RequestParam(value = "confirmation_number", required = false) String confirmationNumber,
-            @RequestParam(value = "status", required = false) String status) {
+            @RequestParam("checkInDate") String checkInDate,
+            @RequestParam("checkOutDate") String checkOutDate,
+            @RequestParam(value = "confirmationNumber", required = false) String confirmationNumber,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "numberOfGuests", required = false, defaultValue = "1") int numberOfGuests,
+            @RequestParam(value = "specialRequests", required = false) String specialRequests) {
 
         Reservation reservation = new Reservation();
 
@@ -63,18 +66,18 @@ public class ReservationController {
         reservation.setRoom(room);
 
         // Parse và set dates
-        reservation.setCheck_in_date(LocalDate.parse(checkInDate));
-        reservation.setCheck_out_date(LocalDate.parse(checkOutDate));
+        reservation.setCheckInDate(LocalDate.parse(checkInDate));
+        reservation.setCheckOutDate(LocalDate.parse(checkOutDate));
 
         // Set created date
-        reservation.setCreated_date(LocalDate.now());
+        reservation.setCreatedDate(LocalDate.now());
 
         // Set confirmation number
         if (confirmationNumber != null && !confirmationNumber.isEmpty()) {
-            reservation.setConfirmation_number(confirmationNumber);
+            reservation.setConfirmationNumber(confirmationNumber);
         } else {
             // Auto-generate confirmation number
-            reservation.setConfirmation_number("CNF-" + System.currentTimeMillis());
+            reservation.setConfirmationNumber("CNF-" + System.currentTimeMillis());
         }
 
         // Set status
@@ -82,6 +85,20 @@ public class ReservationController {
             reservation.setStatus(status);
         } else {
             reservation.setStatus("PENDING");
+        }
+
+        // Set additional fields
+        reservation.setNumberOfGuests(numberOfGuests);
+        reservation.setSpecialRequests(specialRequests);
+
+        // Calculate total price based on room type and number of nights
+        if (room != null && room.getRoomType() != null) {
+            long nights = java.time.temporal.ChronoUnit.DAYS.between(
+                    reservation.getCheckInDate(), reservation.getCheckOutDate());
+            if (nights > 0) {
+                BigDecimal pricePerNight = BigDecimal.valueOf(room.getRoomType().getBasePrice());
+                reservation.setTotalPrice(pricePerNight.multiply(BigDecimal.valueOf(nights)));
+            }
         }
 
         reservationRepository.save(reservation);
@@ -108,25 +125,39 @@ public class ReservationController {
 
     // Cập nhật đặt phòng
     @PostMapping("/update")
-    public String updateReservation(@RequestParam("reservationId") int reservationId,
+    public String updateReservation(@RequestParam("reservationId") Long reservationId,
             @RequestParam("guestId") Long guestId,
             @RequestParam("roomId") Long roomId,
-            @RequestParam("check_in_date") String checkInDate,
-            @RequestParam("check_out_date") String checkOutDate,
-            @RequestParam(value = "confirmation_number", required = false) String confirmationNumber,
-            @RequestParam(value = "status", required = false) String status) {
+            @RequestParam("checkInDate") String checkInDate,
+            @RequestParam("checkOutDate") String checkOutDate,
+            @RequestParam(value = "confirmationNumber", required = false) String confirmationNumber,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "numberOfGuests", required = false, defaultValue = "1") int numberOfGuests,
+            @RequestParam(value = "specialRequests", required = false) String specialRequests) {
 
-        Reservation reservation = reservationRepository.findById((long) reservationId).orElse(null);
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
         if (reservation != null) {
             Guest guest = guestRepository.findById(guestId).orElse(null);
             Room room = roomRepository.findById(roomId).orElse(null);
 
             reservation.setGuest(guest);
             reservation.setRoom(room);
-            reservation.setCheck_in_date(LocalDate.parse(checkInDate));
-            reservation.setCheck_out_date(LocalDate.parse(checkOutDate));
-            reservation.setConfirmation_number(confirmationNumber);
+            reservation.setCheckInDate(LocalDate.parse(checkInDate));
+            reservation.setCheckOutDate(LocalDate.parse(checkOutDate));
+            reservation.setConfirmationNumber(confirmationNumber);
             reservation.setStatus(status);
+            reservation.setNumberOfGuests(numberOfGuests);
+            reservation.setSpecialRequests(specialRequests);
+
+            // Recalculate total price
+            if (room != null && room.getRoomType() != null) {
+                long nights = java.time.temporal.ChronoUnit.DAYS.between(
+                        reservation.getCheckInDate(), reservation.getCheckOutDate());
+                if (nights > 0) {
+                    BigDecimal pricePerNight = BigDecimal.valueOf(room.getRoomType().getBasePrice());
+                    reservation.setTotalPrice(pricePerNight.multiply(BigDecimal.valueOf(nights)));
+                }
+            }
 
             reservationRepository.save(reservation);
         }

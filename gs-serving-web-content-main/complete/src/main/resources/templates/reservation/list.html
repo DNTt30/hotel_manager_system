@@ -234,14 +234,13 @@
                 </thead>
                 <tbody>
                     <tr th:each="r : ${reservations}">
-                        <td class="reservation-id" th:text="${'#RES-' + r.reservation_id}">#RES-001</td>
+                        <td class="reservation-id" th:text="${'#RES-' + r.reservationId}">#RES-001</td>
                         <td class="guest-name" th:text="${r.guest != null ? r.guest.fullName : 'N/A'}">Nguyễn Văn A</td>
                         <td th:text="${r.room != null ? r.room.roomNumber : 'N/A'}">101</td>
-                        <td
-                            th:text="${r.check_in_date != null ? #temporals.format(r.check_in_date, 'dd/MM/yyyy') : 'N/A'}">
+                        <td th:text="${r.checkInDate != null ? #temporals.format(r.checkInDate, 'dd/MM/yyyy') : 'N/A'}">
                             01/01/2026</td>
                         <td
-                            th:text="${r.check_out_date != null ? #temporals.format(r.check_out_date, 'dd/MM/yyyy') : 'N/A'}">
+                            th:text="${r.checkOutDate != null ? #temporals.format(r.checkOutDate, 'dd/MM/yyyy') : 'N/A'}">
                             05/01/2026</td>
                         <td>
                             <span class="status-badge"
@@ -252,11 +251,11 @@
                                 th:text="${r.status}">PENDING</span>
                         </td>
                         <td class="actions">
-                            <a th:href="@{/reservations/details/{id}(id=${r.reservation_id})}"
+                            <a th:href="@{/reservations/details/{id}(id=${r.reservationId})}"
                                 class="action-link view">Chi tiết</a>
-                            <a th:href="@{/reservations/edit/{id}(id=${r.reservation_id})}" class="action-link edit">Cập
+                            <a th:href="@{/reservations/edit/{id}(id=${r.reservationId})}" class="action-link edit">Cập
                                 nhật</a>
-                            <a th:href="@{/reservations/delete/{id}(id=${r.reservation_id})}" class="action-link delete"
+                            <a th:href="@{/reservations/delete/{id}(id=${r.reservationId})}" class="action-link delete"
                                 onclick="return confirm('Bạn có chắc chắn muốn xóa đặt phòng này?')">Xóa</a>
                         </td>
                     </tr>
