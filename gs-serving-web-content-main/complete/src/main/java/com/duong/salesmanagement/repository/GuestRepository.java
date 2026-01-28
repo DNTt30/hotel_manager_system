@@ -10,4 +10,7 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     // Thêm hàm này để hết lỗi findByFullNameContainingIgnoreCase
     List<Guest> findByFullNameContainingIgnoreCase(String fullName);
+
+    // Tìm kiếm theo tên hoặc email
+    List<Guest> findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String fullName, String email);
 }
