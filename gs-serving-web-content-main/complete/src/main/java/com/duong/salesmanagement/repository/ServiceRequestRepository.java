@@ -1,9 +1,9 @@
 package com.duong.salesmanagement.repository;
 
-import com.duong.salesmanagement.model.Payment;
+import com.duong.salesmanagement.model.ServiceRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
+public interface ServiceRequestRepository extends JpaRepository<ServiceRequest, Long> {
 }

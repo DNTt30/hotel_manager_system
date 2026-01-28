@@ -53,8 +53,8 @@ public class ServiceRequest {
         this.requestTime = LocalDateTime.now();
         this.status = "PENDING";
         if (service != null) {
-            this.unitPrice = BigDecimal.valueOf(service.getPrice());
-            this.totalPrice = this.unitPrice.multiply(BigDecimal.valueOf(quantity));
+            this.unitPrice = service.getPrice();
+            this.totalPrice = this.unitPrice != null ? this.unitPrice.multiply(BigDecimal.valueOf(quantity)) : null;
         }
     }
 

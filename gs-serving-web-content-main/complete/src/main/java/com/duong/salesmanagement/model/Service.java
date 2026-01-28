@@ -1,6 +1,7 @@
 package com.duong.salesmanagement.model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,7 @@ public class Service {
     private String category; // SPA, LAUNDRY, RESTAURANT, TRANSPORT, ENTERTAINMENT, OTHER
 
     @Column(name = "price", precision = 10, scale = 2)
-    private double price;
+    private BigDecimal price;
 
     @Column(name = "unit")
     private String unit; // per hour, per item, per person, etc.
@@ -37,7 +38,7 @@ public class Service {
     public Service() {
     }
 
-    public Service(String serviceName, String category, double price) {
+    public Service(String serviceName, String category, BigDecimal price) {
         this.serviceName = serviceName;
         this.category = category;
         this.price = price;
@@ -78,11 +79,11 @@ public class Service {
         this.category = category;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

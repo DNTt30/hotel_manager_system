@@ -2,6 +2,7 @@ package com.duong.salesmanagement.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "payments")
@@ -12,8 +13,8 @@ public class Payment {
     @Column(name = "payment_id")
     private Long paymentId;
 
-    @Column(nullable = false)
-    private double amount;
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal amount;
 
     @Column(name = "payment_method")
     private String paymentMethod;
@@ -30,7 +31,7 @@ public class Payment {
     public Payment() {
     }
 
-    public Payment(double amount, String paymentMethod, LocalDate paymentDate) {
+    public Payment(BigDecimal amount, String paymentMethod, LocalDate paymentDate) {
         this.amount = amount;
         this.paymentMethod = paymentMethod;
         this.paymentDate = paymentDate;
@@ -45,11 +46,11 @@ public class Payment {
         this.paymentId = paymentId;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

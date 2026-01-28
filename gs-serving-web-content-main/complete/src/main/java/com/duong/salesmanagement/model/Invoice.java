@@ -2,6 +2,7 @@ package com.duong.salesmanagement.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -13,11 +14,11 @@ public class Invoice {
     @Column(name = "invoice_id")
     private Long invoiceId;
 
-    @Column(name = "total_amount", nullable = false)
-    private double totalAmount;
+    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
+    private BigDecimal totalAmount;
 
-    @Column(name = "tax")
-    private double tax;
+    @Column(name = "tax", precision = 10, scale = 2)
+    private BigDecimal tax;
 
     @Column(name = "created_date")
     private LocalDate createdDate;
@@ -35,7 +36,7 @@ public class Invoice {
     public Invoice() {
     }
 
-    public Invoice(double totalAmount, double tax, LocalDate createdDate) {
+    public Invoice(BigDecimal totalAmount, BigDecimal tax, LocalDate createdDate) {
         this.totalAmount = totalAmount;
         this.tax = tax;
         this.createdDate = createdDate;
@@ -50,19 +51,19 @@ public class Invoice {
         this.invoiceId = invoiceId;
     }
 
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public double getTax() {
+    public BigDecimal getTax() {
         return tax;
     }
 
-    public void setTax(double tax) {
+    public void setTax(BigDecimal tax) {
         this.tax = tax;
     }
 

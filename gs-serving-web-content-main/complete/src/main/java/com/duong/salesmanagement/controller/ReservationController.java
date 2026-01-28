@@ -96,7 +96,7 @@ public class ReservationController {
             long nights = java.time.temporal.ChronoUnit.DAYS.between(
                     reservation.getCheckInDate(), reservation.getCheckOutDate());
             if (nights > 0) {
-                BigDecimal pricePerNight = BigDecimal.valueOf(room.getRoomType().getBasePrice());
+                BigDecimal pricePerNight = room.getRoomType().getBasePrice();
                 reservation.setTotalPrice(pricePerNight.multiply(BigDecimal.valueOf(nights)));
             }
         }
@@ -154,7 +154,7 @@ public class ReservationController {
                 long nights = java.time.temporal.ChronoUnit.DAYS.between(
                         reservation.getCheckInDate(), reservation.getCheckOutDate());
                 if (nights > 0) {
-                    BigDecimal pricePerNight = BigDecimal.valueOf(room.getRoomType().getBasePrice());
+                    BigDecimal pricePerNight = room.getRoomType().getBasePrice();
                     reservation.setTotalPrice(pricePerNight.multiply(BigDecimal.valueOf(nights)));
                 }
             }

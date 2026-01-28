@@ -1,9 +1,9 @@
 package com.duong.salesmanagement.repository;
 
-import com.duong.salesmanagement.model.Payment;
+import com.duong.salesmanagement.model.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
+public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 }
